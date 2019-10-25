@@ -15,6 +15,7 @@ class ModuleAViewController: UIViewController {
     var videoManager:VideoAnalgesic! = nil
     var detector:CIDetector! = nil
     
+    @IBOutlet weak var smileLabel: UILabel!
     let pinchFilterIndex = 2
     let bridge = OpenCVBridge()
     var eyeMouthFilter=0
@@ -47,11 +48,8 @@ class ModuleAViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
-    
-    
     //MARK: Process image output
     func processImage(inputImage:CIImage) -> CIImage{
-        
         
         // --------detect faces and high light-----------------------
         let f = getFaces(img: inputImage)
@@ -64,12 +62,10 @@ class ModuleAViewController: UIViewController {
             
             self.bridge.processImage()
             retImage = self.bridge.getImageComposite()
-            
-            
+
             //---------------detect eyes and mouth-----------
             //select a fliter
             let selectedFilter=self.filters[self.eyeMouthFilter]
-            
             
             if (faces.hasMouthPosition) {
                 selectedFilter.setValue(retImage, forKey: kCIInputImageKey)
@@ -89,10 +85,10 @@ class ModuleAViewController: UIViewController {
                 selectedFilter.setValue(30, forKey: "inputRadius")
                 retImage = selectedFilter.outputImage!
             }
-
+            //---------------detect eyes and mouth-----------
             
         }
-        //--------------------------------------------------------------
+        //------------------------------------------------------
         
         
         
@@ -105,7 +101,6 @@ class ModuleAViewController: UIViewController {
 //https://developer.apple.com/library/archive/documentation/GraphicsImaging/Reference/CoreImageFilterReference/
         
         filters.append(CIFilter(name:"CIBumpDistortion")!)
-        
         filters.append(CIFilter(name:"CITorusLensDistortion")!)
         filters.append(CIFilter(name:"CIVortexDistortion")!)
         filters.append(CIFilter(name:"CITwirlDistortion")!)

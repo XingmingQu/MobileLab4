@@ -70,18 +70,55 @@
                                     <action selector="changeEyeMouthStyle:" destination="gBJ-Ga-IQM" eventType="touchUpInside" id="CWe-91-TYi"/>
                                 </connections>
                             </button>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="26" translatesAutoresizingMaskIntoConstraints="NO" id="wkI-qs-Nj7">
+                                <rect key="frame" x="10" y="725" width="394" height="38"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Not Smile" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eaO-oJ-mfP">
+                                        <rect key="frame" x="0.0" y="0.0" width="114" height="38"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Left" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="H62-gF-P7M">
+                                        <rect key="frame" x="140" y="0.0" width="114" height="38"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="114" id="BWA-wZ-5H2"/>
+                                            <constraint firstAttribute="height" constant="38" id="Hcr-qI-0S8"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Right" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="urK-sr-PRr">
+                                        <rect key="frame" x="280" y="0.0" width="114" height="38"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="114" id="JEW-f7-THJ"/>
+                                            <constraint firstAttribute="height" constant="38" id="ZmG-T6-iM3"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
+                            <constraint firstItem="wkI-qs-Nj7" firstAttribute="leading" secondItem="7aw-bQ-5L4" secondAttribute="leading" constant="10" id="5Io-fR-6VP"/>
                             <constraint firstItem="52m-1W-Y1T" firstAttribute="top" secondItem="2w7-GP-Ikk" secondAttribute="bottom" id="DAD-cw-tyJ"/>
                             <constraint firstItem="52m-1W-Y1T" firstAttribute="top" secondItem="bJ4-1t-U7J" secondAttribute="bottom" id="E9f-Uw-yNA"/>
                             <constraint firstItem="xm2-cv-eW6" firstAttribute="top" secondItem="rjB-ia-1KY" secondAttribute="bottom" id="FuA-zy-pgR"/>
                             <constraint firstItem="2w7-GP-Ikk" firstAttribute="leading" secondItem="7aw-bQ-5L4" secondAttribute="leading" id="Gaw-Oh-Qqz"/>
                             <constraint firstAttribute="trailingMargin" secondItem="bJ4-1t-U7J" secondAttribute="trailing" id="QhK-er-1tc"/>
+                            <constraint firstAttribute="trailing" secondItem="wkI-qs-Nj7" secondAttribute="trailing" constant="10" id="XEY-e4-ohc"/>
                             <constraint firstItem="xm2-cv-eW6" firstAttribute="leading" secondItem="7aw-bQ-5L4" secondAttribute="leadingMargin" id="lgi-g2-fzE"/>
+                            <constraint firstItem="2w7-GP-Ikk" firstAttribute="top" secondItem="wkI-qs-Nj7" secondAttribute="bottom" constant="20" id="pd7-MH-v5k"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="ModuleA" id="R6k-X3-ieb"/>
+                    <connections>
+                        <outlet property="smileLabel" destination="eaO-oJ-mfP" id="x7o-7o-bIQ"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BuC-GW-OX3" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
