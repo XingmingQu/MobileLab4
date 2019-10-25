@@ -17,13 +17,14 @@ class ModuleAViewController: UIViewController {
     
     let pinchFilterIndex = 2
     let bridge = OpenCVBridge()
-
+    var eyeMouthFilter=0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.view.backgroundColor = nil
-        self.setupFilters()
-        
+        filters = self.setupFilters()
+
         self.videoManager = VideoAnalgesic.sharedInstance
         self.videoManager.setCameraPosition(position: AVCaptureDevice.Position.front)
         
@@ -33,20 +34,16 @@ class ModuleAViewController: UIViewController {
         
         // setup a face detector in swift
         self.detector = CIDetector(ofType: CIDetectorTypeFace,
-                                  context: self.videoManager.getCIContext(), // perform on the GPU if possible
-                                  options: optsDetector)
+                                   context: self.videoManager.getCIContext(), // perform on the GPU if possible
+            options: optsDetector)
         
         self.bridge.setTransforms(self.videoManager.transform)
         self.videoManager.setProcessingBlock(newProcessBlock: self.processImage)
         
-        
-        
         if !videoManager.isRunning{
             videoManager.start()
         }
-        
         self.bridge.processType = 1
-
         // Do any additional setup after loading the view.
     }
     
@@ -55,44 +52,88 @@ class ModuleAViewController: UIViewController {
     //MARK: Process image output
     func processImage(inputImage:CIImage) -> CIImage{
         
-        // detect faces
-        let f = getFaces(img: inputImage)
         
+        // --------detect faces and high light-----------------------
+        let f = getFaces(img: inputImage)
         // if no faces, just return original image
         if f.count == 0 { return inputImage }
-        
         var retImage = inputImage
+        //Highlights multiple faces in the scene using CoreImage filters
+        for faces in f {
+            self.bridge.setImage(retImage, withBounds: faces.bounds, andContext: self.videoManager.getCIContext())
+            
+            self.bridge.processImage()
+            retImage = self.bridge.getImageComposite()
+            
+            
+            //---------------detect eyes and mouth-----------
+            //select a fliter
+            let selectedFilter=self.filters[self.eyeMouthFilter]
+            
+            
+            if (faces.hasMouthPosition) {
+                selectedFilter.setValue(retImage, forKey: kCIInputImageKey)
+                selectedFilter.setValue(CIVector(cgPoint: faces.mouthPosition), forKey: "inputCenter")
+                selectedFilter.setValue(50, forKey: "inputRadius")
+                retImage = selectedFilter.outputImage!
+            }
+            if (faces.hasLeftEyePosition) {
+                selectedFilter.setValue(retImage, forKey: kCIInputImageKey)
+                selectedFilter.setValue(CIVector(cgPoint: faces.leftEyePosition), forKey: "inputCenter")
+                selectedFilter.setValue(30, forKey: "inputRadius")
+                retImage = selectedFilter.outputImage!
+            }
+            if (faces.hasRightEyePosition) {
+                selectedFilter.setValue(retImage, forKey: kCIInputImageKey)
+                selectedFilter.setValue(CIVector(cgPoint: faces.rightEyePosition), forKey: "inputCenter")
+                selectedFilter.setValue(30, forKey: "inputRadius")
+                retImage = selectedFilter.outputImage!
+            }
+
+            
+        }
+        //--------------------------------------------------------------
         
-        // use this code if you are using OpenCV and want to overwrite the displayed image via OpenCv
-        // this is a BLOCKING CALL
-        self.bridge.setImage(retImage, withBounds: f[0].bounds, andContext: self.videoManager.getCIContext())
-        self.bridge.processImage()
-        retImage = self.bridge.getImageComposite()
         
-        //HINT: you can also send in the bounds of the face to ONLY process the face in OpenCV
-        // or any bounds to only process a certain bounding region in OpenCV
         
         return retImage
     }
     
     //MARK: Setup filtering
-    func setupFilters(){
+    func setupFilters()->[CIFilter]{
         filters = []
+//https://developer.apple.com/library/archive/documentation/GraphicsImaging/Reference/CoreImageFilterReference/
         
-        let filterPinch = CIFilter(name:"CIBumpDistortion")!
-        filterPinch.setValue(-0.5, forKey: "inputScale")
-        filterPinch.setValue(75, forKey: "inputRadius")
-        filters.append(filterPinch)
+        filters.append(CIFilter(name:"CIBumpDistortion")!)
+        
+        filters.append(CIFilter(name:"CITorusLensDistortion")!)
+        filters.append(CIFilter(name:"CIVortexDistortion")!)
+        filters.append(CIFilter(name:"CITwirlDistortion")!)
+//        filterPinch.setValue(-0.5, forKey: "inputScale")
+//        filterPinch.setValue(75, forKey: "inputRadius")
+        return filters
         
     }
     
     func getFaces(img:CIImage) -> [CIFaceFeature]{
-         // this ungodly mess makes sure the image is the correct orientation
-         let optsFace = [CIDetectorImageOrientation:self.videoManager.ciOrientation]
-         // get Face Features
-         return self.detector.features(in: img, options: optsFace) as! [CIFaceFeature]
-         
-     }
-     
-
+        // this ungodly mess makes sure the image is the correct orientation
+        let optsFace = [CIDetectorImageOrientation:self.videoManager.ciOrientation]
+        // get Face Features
+        return self.detector.features(in: img, options: optsFace) as! [CIFaceFeature]
+        
+    }
+    
+    
+    @IBAction func switchCamera(_ sender: UIButton) {
+        self.videoManager.toggleCameraPosition()
+    }
+    
+    
+    @IBAction func changeHightLightStyle(_ sender: Any) {
+        self.bridge.processType = (self.bridge.processType+1)%11+1
+    }
+    @IBAction func changeEyeMouthStyle(_ sender: UIButton) {
+        self.eyeMouthFilter = (self.eyeMouthFilter+1)%4
+    }
+    
 }
